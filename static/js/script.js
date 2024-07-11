@@ -40,7 +40,7 @@ socket.onmessage = (e) => {
     $('#fetchButton').off('click').click(() => {
       $.ajax({
         url: data['url'],
-        type : 'GET',
+        type : 'HEAD',
         success: () => {
           window.location.href = data['url'];
         },

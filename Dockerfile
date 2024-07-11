@@ -14,4 +14,4 @@ RUN pip install -r requirements.txt
 RUN pip install 'uvicorn[standard]'
 
 COPY . .
-RUN mkdir static/tmp
+RUN mkdir -p static/tmp
