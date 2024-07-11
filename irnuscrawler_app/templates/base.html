@@ -1,0 +1,70 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+<head>
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta property="og:title" content="IrnusDL - Irama Nusantara Downloader" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://irnus-dl.slickerius.com" />
+  <meta property="og:image" content="{% static 'img/idl-logo.png' %}" />
+  <meta property="og:description" content="Tool for parsing and downloading releases from Irama Nusantara with injected metadata." />
+  <meta name="theme-color" content="#09182E">
+  <meta name="twitter:card" content="summary_large_image">
+  
+  <title>{% block title %}IrnusDL - Irama Nusantara Downloader{% endblock title %}</title>
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  <style>
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="d-flex h-100 text-center text-white">
+  <div class="irnusdl-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    {% include 'header.html' %}
+    
+    {% block page_content %}{% endblock page_content %}
+    
+    <footer class="mt-auto text-white-50">
+      <p class="footer-text footer-idl">Made for the convenience of the Indonesian music <del>scrobblers</del> lovers, by <a href="https://github.com/Slickerius" target="_blank" class="text-white">sl0ck</a>.</p>
+    </footer>
+  </div>
+  <script>
+    $(document).ready(() => {
+      $('#homeNavBtn').on('click', () => {
+        console.log('Hi!');
+        $('#homeNavBtn').addClass('active');
+        $('#aboutNavBtn').removeClass('active');
+        $('#mainPage').removeClass('d-none');
+        $('#aboutPage').addClass('d-none');
+      });
+
+      $('#aboutNavBtn').on('click', () => {
+        console.log('Hi!');
+        $('#homeNavBtn').removeClass('active');
+        $('#aboutNavBtn').addClass('active');
+        $('#mainPage').addClass('d-none');
+        $('#aboutPage').removeClass('d-none');
+      });
+    });
+  </script>
+</body>
+
+</html>

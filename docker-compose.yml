@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: gunicorn --bind 0.0.0.0:8000 irnuscrawler.asgi -k uvicorn.workers.UvicornWorker
+    volumes:
+      - .:/usr/src/app/
+      - static_volume:/usr/src/app/static
+    ports:
+      - 8000
+
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/home/app/web/static
+    ports:
+      - 1337:80
+    depends_on:
+      - web
+
+volumes:
+  static_volume:
