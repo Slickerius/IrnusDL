@@ -11,11 +11,15 @@ services:
       - 8000
 
   nginx:
-    build: ./nginx
+    image: nginx:1.17
+    ports:
+      - 80:80
+      - 443:443
     volumes:
       - static_volume:/home/app/web/static
-    ports:
-      - 1337:80
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/fullchain.pem:/certificates/fullchain.pem:ro
+      - ./nginx/privkey.pem:/certificates/privkey.pem:ro
     depends_on:
       - web
 

@@ -1,4 +1,4 @@
-const socket = new WebSocket('ws://' + window.location.host + '/ws/download/');
+const socket = new WebSocket('wss://' + window.location.host + '/ws/download/');
 
 socket.onmessage = (e) => {
   const data = JSON.parse(e.data);
@@ -70,8 +70,6 @@ socket.onmessage = (e) => {
     
     $('#errorText').text(data['message']);
   }
-
-  console.log(`Message: ${stringifiedData}`);
 };
 
 socket.onclose = (e) => {
