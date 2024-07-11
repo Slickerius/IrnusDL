@@ -117,6 +117,8 @@ async def download_album(url, is_use_track_artist, is_use_multiple_artist, consu
       out_file_name = f'{album_artist} - {album_title}'
       if album_year:
         out_file_name += f' ({album_year})'
+      
+      out_file_name = out_file_name.replace('/', '')
 
       await consumer.send(text_data=json.dumps({
         'status': 'PROCESS',
