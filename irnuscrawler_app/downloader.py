@@ -117,7 +117,7 @@ async def download_album(url, is_use_track_artist, is_use_multiple_artist, consu
         aud.tag.title = track_title
         aud.tag.track_num = i + 1
 
-        if album_year:
+        if album_year and album_year.isdigit():
           aud.tag.recording_date = eyed3.core.Date(int(album_year))
 
         aud.tag.images.set(3, open(cover_file_path, 'rb').read(), 'image/jpeg')
