@@ -46,6 +46,8 @@ async def download_album(url, is_use_track_artist, is_use_multiple_artist, consu
       data = data['props']['pageProps']['data']['attributes']
       album_title = data['record_title']
       album_year = data['released']
+      if not (album_year and album_year.isdigit()):
+        album_year = ''
       album_country = data['country']
       album_artist = data['artist'][0]['artist']['data']['attributes']['artist_name']
       album_art_url = data['record_thumbnail']['data'][0]['attributes']['url']
@@ -73,6 +75,7 @@ async def download_album(url, is_use_track_artist, is_use_multiple_artist, consu
 
       for i, track in enumerate(data['tracklists']):
         track_title = track['title']
+        track_title = track_title.replace('/', ' ')
         track_duration = datetime.timedelta(seconds=int(track['duration']))
         track_artist = ''
 
