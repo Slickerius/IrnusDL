@@ -74,17 +74,26 @@ async def download_album(url, is_use_track_artist, is_use_multiple_artist, consu
       for i, track in enumerate(data['tracklists']):
         track_title = track['title']
         track_duration = datetime.timedelta(seconds=int(track['duration']))
-        track_artist = album_artist
+        track_artist = ''
 
         if not track['file_track']['data']:
           continue
 
         if is_use_track_artist and track['credits']:
-          track_artist = ', '.join(
-            credits['artists']['data'][0]['attributes']['artist_name']
-            for credits in track['credits']
-            if credits['role'] == 'Vokal'
-          ) or album_artist
+          if is_use_multiple_artist:
+            track_artist = ', '.join(
+              credits['artists']['data'][0]['attributes']['artist_name']
+              for credits in track['credits']
+              if credits['role'] == 'Vokal'
+            ) or album_artist
+          else:
+            for credits in track['credits']:
+              if credits['role'] == 'Vokal' and not track_artist:
+                track_artist = credits['artists']['data'][0]['attributes']['artist_name']
+                break
+
+        if not track_artist:
+          track_artist = album_artist
 
         track_url = track['file_track']['data']['attributes']['url']
         track_extension = track_url.split('.')[-1]
