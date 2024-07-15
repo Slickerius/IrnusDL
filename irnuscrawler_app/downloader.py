@@ -15,7 +15,7 @@ import shutil
 
 async def download_album(url, is_use_track_artist, is_use_multiple_artist, consumer):
   try:
-    if not re.match(r'^https:\/\/www\.iramanusantara\.org\/release\/\d+$', url):
+    if not re.match(r'^https:\/\/www\.iramanusantara\.org\/release\/\d+(\/master)?$', url):
       await consumer.send(text_data=json.dumps({
         'status': 'ERROR',
         'message': 'Invalid URL, please try again.',
