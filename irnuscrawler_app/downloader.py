@@ -12,11 +12,11 @@ import traceback
 import re
 import subprocess
 import shutil
+import shlex
 
 # Helper function to sanitize and escape file names
 def sanitize_filename(filename):
-    # Escape forward slashes and remove other problematic characters
-    return re.sub(r'[<>:"\\|?*]', '', filename).replace('/', '\\/')
+    return shlex.quote(filename)
 
 async def download_album(url, is_use_track_artist, is_use_multiple_artist, consumer):
     try:
@@ -79,7 +79,7 @@ async def download_album(url, is_use_track_artist, is_use_multiple_artist, consu
                     await f.write(await response.read())
 
             for i, track in enumerate(data['tracklists']):
-                track_title = sanitize_filename(track['title']).replace('/', '\\/')
+                track_title = sanitize_filename(track['title'])
                 track_duration = datetime.timedelta(seconds=int(track['duration']))
                 track_artist = ''
 
