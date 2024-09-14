@@ -150,7 +150,7 @@ async def download_album(url, is_use_track_artist, is_use_multiple_artist, consu
 
             await consumer.send(text_data=json.dumps({
                 'status': 'SUCCESS',
-                'url': f'/static/tmp/{urllib.parse.quote(unsanitized_file_name)}',
+                'url': f'/static/tmp/{urllib.parse.quote(unsanitized_file_name.replace("/", ""))}',
             }))
 
             shutil.rmtree(f'tmp-{uuid}')
