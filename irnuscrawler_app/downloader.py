@@ -13,9 +13,11 @@ import re
 import subprocess
 import shutil
 import shlex
+import urllib.parse
 
 # Helper function to sanitize and escape file names
 def sanitize_filename(filename):
+    filename = filename.replace('/', '')
     return shlex.quote(filename)
 
 async def download_album(url, is_use_track_artist, is_use_multiple_artist, consumer):
@@ -49,17 +51,17 @@ async def download_album(url, is_use_track_artist, is_use_multiple_artist, consu
                 return
 
             data = data['props']['pageProps']['data']['attributes']
-            album_title = sanitize_filename(data['record_title'])
+            album_title = data['record_title']
             album_year = data['released']
             if not (album_year and album_year.isdigit()):
                 album_year = ''
             album_country = data['country']
-            album_artist = sanitize_filename(data['artist'][0]['artist']['data']['attributes']['artist_name'])
+            album_artist = data['artist'][0]['artist']['data']['attributes']['artist_name']
             album_art_url = data['record_thumbnail']['data'][0]['attributes']['url']
             album_art_extension = album_art_url.split('.')[-1]
 
             if is_use_multiple_artist:
-                album_artist = ', '.join(sanitize_filename(artist['artist']['data']['attributes']['artist_name']) for artist in data['artist'])
+                album_artist = ', '.join(artist['artist']['data']['attributes']['artist_name'] for artist in data['artist'])
 
             if album_artist == 'Student Power, The':
                 album_artist = 'The Student Power'
@@ -79,7 +81,7 @@ async def download_album(url, is_use_track_artist, is_use_multiple_artist, consu
                     await f.write(await response.read())
 
             for i, track in enumerate(data['tracklists']):
-                track_title = sanitize_filename(track['title'])
+                track_title = track['title'].replace('/', '')
                 track_duration = datetime.timedelta(seconds=int(track['duration']))
                 track_artist = ''
 
@@ -89,14 +91,14 @@ async def download_album(url, is_use_track_artist, is_use_multiple_artist, consu
                 if is_use_track_artist and track['credits']:
                     if is_use_multiple_artist:
                         track_artist = ', '.join(
-                            sanitize_filename(credits['artists']['data'][0]['attributes']['artist_name'])
+                            credits['artists']['data'][0]['attributes']['artist_name']
                             for credits in track['credits']
                             if credits['role'] == 'Vokal'
                         ) or album_artist
                     else:
                         for credits in track['credits']:
                             if credits['role'] == 'Vokal' and not track_artist:
-                                track_artist = sanitize_filename(credits['artists']['data'][0]['attributes']['artist_name'])
+                                track_artist = credits['artists']['data'][0]['attributes']['artist_name']
                                 break
 
                 if not track_artist:
@@ -133,25 +135,26 @@ async def download_album(url, is_use_track_artist, is_use_multiple_artist, consu
             out_file_name = f'{album_artist} - {album_title}'
             if album_year:
                 out_file_name += f' ({album_year})'
-            
-            out_file_name = sanitize_filename(out_file_name)
+
+            unsanitized_file_name = f'{out_file_name}.zip'
+            out_file_name = sanitize_filename(unsanitized_file_name)
 
             await consumer.send(text_data=json.dumps({
                 'status': 'PROCESS',
                 'message': 'Zipping tracks...',
             }))
 
-            zip_command = f'cd tmp-{uuid}; zip -r ../static/tmp/"{out_file_name}.zip" *'
+            zip_command = f'cd tmp-{uuid}; zip -r ../static/tmp/{out_file_name} *'
             process = await asyncio.create_subprocess_shell(zip_command)
             await process.communicate()
 
             await consumer.send(text_data=json.dumps({
                 'status': 'SUCCESS',
-                'url': f'/static/tmp/{out_file_name}.zip',
+                'url': f'/static/tmp/{urllib.parse.quote(unsanitized_file_name)}',
             }))
 
             shutil.rmtree(f'tmp-{uuid}')
-            subprocess.Popen(f'sleep 180 && rm static/tmp/"{out_file_name}.zip"', shell=True)
+            subprocess.Popen(f'sleep 180 && rm static/tmp/{out_file_name}', shell=True)
 
     except Exception as e:
         traceback.print_exc()
