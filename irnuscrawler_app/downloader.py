@@ -81,6 +81,8 @@ async def download_album(url, is_use_track_artist, is_use_multiple_artist, consu
                     await f.write(await response.read())
 
             for i, track in enumerate(data['tracklists']):
+                if not track['duration']:
+                    continue
                 track_title = track['title'].replace('/', '')
                 track_duration = datetime.timedelta(seconds=int(track['duration']))
                 track_artist = ''
