@@ -1,0 +1,160 @@
+
+
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+<head>
+  <link rel="shortcut icon" type="image/x-icon" href="/static/img/favicon.ico">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta property="og:title" content="IrnusDL - Irama Nusantara Downloader" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://irnus-dl.slickerius.com" />
+  <meta property="og:image" content="/static/img/idl-logo.png" />
+  <meta property="og:description" content="Tool for parsing and downloading releases from Irama Nusantara with injected metadata." />
+  <meta name="theme-color" content="#09182E">
+  
+  <title>IrnusDL - Irama Nusantara Downloader</title>
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/css/app.css">
+  <script src="/static/js/jquery-3.7.1.min.js"></script>
+  <script src="/static/js/bootstrap.min.js"></script>
+  <style>
+    .bd-placeholder-img {
+      font-size: 1.125rem;
+      text-anchor: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      user-select: none;
+    }
+
+    @media (min-width: 768px) {
+      .bd-placeholder-img-lg {
+        font-size: 3.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="d-flex h-100 text-center text-white">
+  <div class="irnusdl-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <header class="mb-auto">
+  <div>
+    <h3 class="float-md-start mb-0">Irnus<span class="text-primary">DL</span></h3>
+    <nav class="nav nav-masthead justify-content-center float-md-end">
+      <a id="homeNavBtn" class="nav-link active" aria-current="page">Home</a>
+      <a id="aboutNavBtn" class="nav-link">About</a>
+    </nav>
+  </div>
+</header>
+    
+    
+  <main id="mainPage" class="px-3">
+    <div class="d-flex gap-2">
+      <button class="btn btn-secondary d-flex align-items-center justify-content-center" data-bs-toggle="collapse" href="#optionsCollapse" role="button" aria-expanded="false" aria-controls="optionsCollapse">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ffffff" class="bi bi-gear-fill" viewBox="0 0 16 16">
+          <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+        </svg>
+      </button>
+      <div class="input-group">
+        <input id="downloadURL" type="text" class="form-control" placeholder="Irama Nusantara album URL">
+        <button id="downloadButton" class="btn btn-primary" type="button">Download</button>
+      </div>
+    </div>
+
+    <div class="collapse mt-3" id="optionsCollapse">
+      <div class="card card-body border-secondary bg-idl">
+        <p class="fw-bold">Metadata Options</p>
+        <div class="text-start">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="useTrackArtistSwitch" checked>
+            <label class="form-check-label" for="useTrackArtistSwitch">If individual tracks have different artists, use the individual track artists instead of the albumwide artist (e.g. 'Various')?</label>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="useMultipleArtistSwitch">
+            <label class="form-check-label" for="useMultipleArtistSwitch">If there is more than one artist, use all ('Artist 1, Artist 2') instead of only first artist ('Artist 1')?</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="albumInfoCard" class="card card-body text-white bg-idl border-primary mt-3 d-none">
+      <div class="row">
+        <div class="col-lg-2 col-md-2 col-sm-12">
+          <img id="albumInfoImg" height="75" width="75"/>
+        </div>
+        <div class="col-lg-10 col-md-10 col-sm-12 mt-md-0 mt-4 text-start">
+          <div class="row h-50">
+            <div class="col-sm-6 col-xs-12 d-flex gap-2 justify-content-center justify-content-sm-start align-items-center">
+              <span><b>Name:</b></span><span id="albumInfoName"></span>
+            </div>
+            <div class="col-sm-6 col-xs-12 d-flex gap-2 justify-content-center justify-content-sm-start align-items-center">
+              <span><b>Artist:</b></span><span id="albumInfoArtist"></span>
+            </div>
+          </div>
+          <div class="row h-50">
+            <div class="col-sm-6 col-xs-12 d-flex gap-2 justify-content-center justify-content-sm-start align-items-center">
+              <span><b>Year:</b></span><span id="albumInfoYear"></span>
+            </div>
+            <div class="col-sm-6 col-xs-12 d-flex gap-2 justify-content-center justify-content-sm-start align-items-center">
+              <span><b>Country:</b></span><span id="albumInfoCountry"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="statusCard" class="card card-body text-white bg-idl border-primary mt-3 d-none">
+      <div id="cardProcessingContent" class="d-flex justify-content-center align-items-center gap-2">
+        <div class="spinner-border" role="status"></div>
+        <span id="statusText" class="align-middle">Loading...</span>
+      </div>
+      <div id="cardErrorContent" class="align-items-center justify-content-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#DC3545" class="bi bi-exclamation-octagon-fill" viewBox="0 0 16 16">
+          <path d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353zM8 4c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995A.905.905 0 0 1 8 4m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+        </svg>
+        <span id="errorText" class="fw-bold"></span>
+      </div>
+      <div id="cardSuccessContent" class="d-none">
+        <p class="fw-bold">Processing complete. Download link:</p>
+        <button id="fetchButton" class="btn btn-success" type="button">Download</button>
+      </div>
+    </div>
+  </main>
+
+  <main id="aboutPage" class="px-3 d-none">
+    <h1>About</h1>
+    <div class="my-4 text-start">
+      <p><b>Irnus<span class="text-primary">DL</span></b> is a web utility for parsing and downloading Irama Nusantara releases with the injection of the appropriate metadata. This website was envisioned to support the needs of Last.fm scrobblers and those who collect digital music files. </p>
+      <p>The intention of this site is purely to assist with the collection of proper metadata in regards to Indonesian music releases. This site does not seek to gain any financial or monetary benefit from its use. Our primary goal is to provide valuable information and resources without any commercial intent or profit motive.</p>
+      <p>If you happen to encounter any errors or issues related to the website or the files/metadata generated by the site, please contact @sl0ck on Discord.</p>
+    </div>
+    <p>Created by <a href="https://www.last.fm/user/sl0ck" target="_blank">sl0ck</a> | Thanks to the beta<s>s</s> testers: <a href="https://www.last.fm/user/woundering" target="_blank">woundering</a>, <a href="https://www.last.fm/user/grampapeach" target="_blank">taxhell</a>, <a href="https://www.last.fm/user/drepram" target="_blank">drepram</a>, <a href="https://www.last.fm/user/MythicalCat" target="_blank">MyticalCat</a></p>
+  </main>
+  
+  <script src="/static/js/script.js"></script>
+
+    
+    <footer class="mt-auto text-white-50">
+      <p class="footer-text footer-idl">Made for the convenience of Indonesian music <del>scrobblers</del> lovers, by <a href="https://github.com/Slickerius" target="_blank" class="text-white">sl0ck</a>.</p>
+    </footer>
+  </div>
+  <script>
+    $(document).ready(() => {
+      $('#homeNavBtn').on('click', () => {
+        $('#homeNavBtn').addClass('active');
+        $('#aboutNavBtn').removeClass('active');
+        $('#mainPage').removeClass('d-none');
+        $('#aboutPage').addClass('d-none');
+      });
+
+      $('#aboutNavBtn').on('click', () => {
+        $('#homeNavBtn').removeClass('active');
+        $('#aboutNavBtn').addClass('active');
+        $('#mainPage').addClass('d-none');
+        $('#aboutPage').removeClass('d-none');
+      });
+    });
+  </script>
+</body>
+
+</html>
