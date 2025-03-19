@@ -43,14 +43,24 @@ async def download_album(url, is_use_track_artist, is_use_multiple_artist, consu
             json_data = script_el.string
             data = json.loads(json_data)
 
-            if not data['props']['pageProps']['data']:
+            release_id = data['props']['pageProps']['query']['id']
+            await consumer.send(text_data=json.dumps({
+                'status': 'PROCESS',
+                'message': 'Fetching API...',
+            }))
+
+            data = ''
+            async with session.get(f'https://core.iramanusantara.org/api/records/{release_id}?populate=artist,artist.artist,labels,tracklists,records,records.format,records.labels,record_thumbnail,records.record_thumbnail,format,record,credits,tracklists.credits.artists,articles.article_thumbnail&locale=id') as response:
+                data = json.loads(await response.text())
+
+            if not data['data'] or not 'id' in data['data']:
                 await consumer.send(text_data=json.dumps({
                     'status': 'ERROR',
                     'message': 'Release not found, please try again.',
                 }))
                 return
 
-            data = data['props']['pageProps']['data']['attributes']
+            data = data['data']['attributes']
             album_title = data['record_title']
             album_year = data['released']
             if not (album_year and album_year.isdigit()):
