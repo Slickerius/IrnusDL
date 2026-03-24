@@ -1,8 +1,6 @@
 #!/bin/bash
-docker run -it --rm --name certbot \
-           -v "/etc/letsencrypt:/etc/letsencrypt" \
-           -v "/var/lib/letsencrypt:/var/lib/letsencrypt" \
-           -p 80:80 -p 443:443 certbot/certbot certonly
+sudo docker run --rm -v /etc/letsencrypt:/etc/letsencrypt -v /var/lib/letsencrypt:/var/lib/letsencrypt certbot/dns-cloudflare certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini -d irnus-dl.slickerius.com -d irnus-dl.slickeri.us
 
-sudo cp /etc/letsencrypt/live/irnus-dl.slickerius.com/fullchain.pem nginx/
-sudo cp /etc/letsencrypt/live/irnus-dl.slickerius.com/privkey.pem nginx/
+kubectl create secret tls irnusdl-tls --cert=/etc/letsencrypt/live/irnus-dl.slickerius.com/fullchain.pem --key=/etc/letsencrypt/live/irnus-dl.slickerius.com/privkey.pem -n irnusdl --dry-run=client -o yaml | kubectl apply -f -
+
+kubectl rollout restart deployment/irnusdl -n irnusdl
