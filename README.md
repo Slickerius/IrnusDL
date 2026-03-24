@@ -10,18 +10,26 @@ IrnusDL is a web utility for parsing and downloading Irama Nusantara releases gi
 
 ![demo](static/img/demo.gif)
 
-## Installation
+## Deployment
 
-Make sure that you have the appropriate Docker Engine installed. When running this on an HTTPS server, paste your `privkey.pem` and `fullchain.pem` files to the `nginx/` directory. If not running on an HTTPS server, change the WebSocket protocol used in `static/js/script.js` to `ws://`. 
+IrnusDL is deployed on a k3s cluster via [sl0ck-k8s](https://github.com/Slickerius/sl0ck-k8s). See that repo for all Kubernetes manifests.
 
-Running this application requires only the following command:
+### Build and push image
 
 ```sh
-$ ./start.sh
+docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/slickerius/irnusdl:latest --push .
 ```
 
-And do the following to restart the app.
+### TLS renewal
 
 ```sh
-$ ./restart.sh
+sudo docker run --rm -v /etc/letsencrypt:/etc/letsencrypt -v /var/lib/letsencrypt:/var/lib/letsencrypt certbot/dns-cloudflare certonly --dns-cloudflare --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini -d irnus-dl.slickerius.com -d irnus-dl.slickeri.us
+```
+
+```sh
+kubectl create secret tls irnusdl-tls --cert=/etc/letsencrypt/live/irnus-dl.slickerius.com/fullchain.pem --key=/etc/letsencrypt/live/irnus-dl.slickerius.com/privkey.pem -n irnusdl --dry-run=client -o yaml | kubectl apply -f -
+```
+
+```sh
+kubectl rollout restart deployment/irnusdl -n irnusdl
 ```
