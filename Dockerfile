@@ -1,5 +1,7 @@
 FROM python:3.11-slim-bookworm
 
+LABEL org.opencontainers.image.source=https://github.com/Slickerius/IrnusDL
+
 WORKDIR /usr/src/app
 
 ENV PYTHONDONTWRITEBYTECODE 1
