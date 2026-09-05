@@ -16,6 +16,14 @@ IrnusDL is deployed on a k3s cluster via [sl0ck-k8s](https://github.com/Slickeri
 
 ### Build and push image
 
+A push to `main` builds `ghcr.io/slickerius/irnusdl:latest` via GitHub Actions and pushes it to GHCR. After the image lands, restart the workload:
+
+```sh
+kubectl rollout restart deployment/irnusdl -n irnusdl
+```
+
+To build locally instead:
+
 ```sh
 docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/slickerius/irnusdl:latest --push .
 ```
