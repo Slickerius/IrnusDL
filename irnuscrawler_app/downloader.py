@@ -156,17 +156,23 @@ async def download_album(url, is_use_track_artist, is_use_multiple_artist, consu
                 'message': 'Zipping tracks...',
             }))
 
-            zip_command = f'cd tmp-{uuid}; zip -r ../static/tmp/{out_file_name} *'
+            # Each run zips into its own directory, so the URL is unique per
+            # run while the downloaded file name stays clean. Sharing one path
+            # let concurrent runs overwrite each other and let one run's
+            # cleanup timer delete another run's archive.
+            os.makedirs(f'static/tmp/{uuid}', exist_ok=True)
+
+            zip_command = f'cd tmp-{uuid}; zip -r ../static/tmp/{uuid}/{out_file_name} *'
             process = await asyncio.create_subprocess_shell(zip_command)
             await process.communicate()
 
             await consumer.send(text_data=json.dumps({
                 'status': 'SUCCESS',
-                'url': f'/static/tmp/{urllib.parse.quote(unsanitized_file_name.replace("/", ""))}',
+                'url': f'/static/tmp/{uuid}/{urllib.parse.quote(unsanitized_file_name.replace("/", ""))}',
             }))
 
             shutil.rmtree(f'tmp-{uuid}')
-            subprocess.Popen(f'sleep 180 && rm static/tmp/{out_file_name}', shell=True)
+            subprocess.Popen(f'sleep 180 && rm -rf static/tmp/{uuid}', shell=True)
 
     except Exception as e:
         traceback.print_exc()
